@@ -26,11 +26,6 @@ namespace GeneticAlgorithms {
 
     Chromosome() : _rank(0.0f) {
     }
-
-    template <typename Functor>
-    void setRank(const Functor &rank_func) {
-      _rank = rank_func(*this);
-    }
     
     bool operator[](const size_t i) const {
       return _gens[i];

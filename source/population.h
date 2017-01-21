@@ -16,9 +16,8 @@ namespace GeneticAlgorithms {
       _rank_func(rank_func) {
     }
 
-    void push(Chromosome<N> &x) {
-      x.setRank(_rank_func);
-      _queue.push(x);
+    void push(const Chromosome<N> &x) {
+      _queue.push(Chromosome<N>(x.gens(), _rank_func(x)));
     }
 
     Chromosome<N> top() const {
@@ -30,8 +29,7 @@ namespace GeneticAlgorithms {
               const size_t size) {
       for (size_t i=0; i<size; ++i) {
         Chromosome<N> x = init_func();
-        x.setRank(_rank_func);
-        _queue.push(x);
+        _queue.push(Chromosome<N>(x.gens(), _rank_func(x)));
         // std::cout << "    " << x.rank() << " " << x.gens() << std::endl;
       }
       // std::cout << "\n" << std::endl;

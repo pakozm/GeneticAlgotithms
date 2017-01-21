@@ -36,10 +36,8 @@ namespace GeneticAlgorithms {
     for (size_t i=0; i<num_iterations; ++i) {
       for (auto couple : current.select(select_func,
                                         population_size)) {
-        Chromosome<N> child = cross_over_func(couple.first,
-                                              couple.second);
-        Chromosome<N> mutated = mutate_func(child);
-        next.push(mutated);
+        next.push(mutate_func(cross_over_func(couple.first,
+                                              couple.second)));
       }
       std::swap(current, next);
       if (best < current.top()) {
