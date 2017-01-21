@@ -19,7 +19,7 @@ namespace GeneticAlgorithms {
   public:
     typedef std::pair<Chromosome<N>, Chromosome<N> > Couple;
     
-    Chromosome(std::bitset<N> gens,
+    Chromosome(const std::bitset<N> &gens,
                float rank=-std::numeric_limits<float>::infinity()) :
       _gens(gens), _rank(rank) {
     }
