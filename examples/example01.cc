@@ -14,7 +14,7 @@ using std::endl;
 
 using namespace GeneticAlgorithms;
 
-#define N 24
+#define N 50
 
 struct MyRank {
   float operator()(const Chromosome<N> &x) const {
