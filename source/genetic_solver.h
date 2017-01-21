@@ -23,7 +23,8 @@ namespace GeneticAlgorithms {
                       const SelectionFunctor &select_func,
                       const CrossOverFunctor &cross_over_func,
                       const MutationFunctor &mutate_func,
-                      const RankFunctor &rank_func) {
+                      const RankFunctor &rank_func,
+                      int verbosity=0) {
     Population<N, RankFunctor> current(rank_func);
     Population<N, RankFunctor> next(rank_func);
     Population<N, RankFunctor> work(rank_func);
@@ -44,9 +45,11 @@ namespace GeneticAlgorithms {
       if (best < current.top()) {
         best = current.top();
       }
-      std::cout << i << ": "
-                << current.top().rank() << " " << current.top().gens()
-                << std::endl;
+      if (verbosity > 0) {
+        std::cout << i << ": " << best.rank() << " :: "
+                  << current.top().rank() << " " << current.top().gens()
+                  << std::endl;
+      }
     }
 
     return best;
