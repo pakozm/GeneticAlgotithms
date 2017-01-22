@@ -29,7 +29,7 @@ int main() {
   MyRank rank;
   Chromosome best = solve(10000u,
                           100u,
-                          RandomInitializer(N, rng()),
+                          RandomInitializer(N, rng(), 0.5f),
                           RouletteWheelSelection<float>(rng()),
                           RandomSplitCrossOver(N, rng()),
                           RandomMutate(rng(), 0.5f),
