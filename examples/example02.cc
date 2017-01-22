@@ -59,7 +59,7 @@ int main() {
   Chromosome<N> best = solve<N>(1000u,
                                 1000u,
                                 RandomInitializer<N>(rng(), 0.1f),
-                                RankDistSelection<N>(rng()),
+                                RouletteWheelSelection<N>(rng()),
                                 RandomMixCrossOver<N>(rng()),
                                 RandomMutate<N>(rng(), 0.001f),
                                 rank,

@@ -49,18 +49,18 @@ namespace GeneticAlgorithms {
    * instance.
    */
   template<std::size_t N, typename T=float>
-  class RankDistSelection {
+  class RouletteWheelSelection {
   public:
 
     /// Initializes the algorithm by receiving a random seed
-    RankDistSelection(unsigned seed) :
+    RouletteWheelSelection(unsigned seed) :
       _rng(seed) {
     }
 
     /// This functor receives a population and returns selected couples
     std::vector<typename Chromosome<N>::Couple>
     operator()(const std::vector<std::pair<Chromosome<N>, T> > pop,
-               size_t result_size=0uL) const {
+               size_t result_size) const {
       std::vector<float> ranks(pop.size());
       // extract all ranks from pop vector
       std::transform(pop.begin(), pop.end(), ranks.begin(),
@@ -75,8 +75,6 @@ namespace GeneticAlgorithms {
 
       // the multinomial distribution is computed here
       std::discrete_distribution<int> distribution(ranks.begin(), ranks.end());
-
-      if (result_size == 0uL) result_size = pop.size();
 
       // generate a vector of couples by sampling from distribution
       std::vector<typename Chromosome<N>::Couple> result(result_size);

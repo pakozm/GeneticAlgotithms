@@ -30,7 +30,7 @@ int main() {
   Chromosome<N> best = solve<N>(10000u,
                                 100u,
                                 RandomInitializer<N>(rng()),
-                                RankDistSelection<N>(rng()),
+                                RouletteWheelSelection<N>(rng()),
                                 RandomSplitCrossOver<N>(rng()),
                                 RandomMutate<N>(rng(), 0.5f),
                                 rank,

@@ -59,6 +59,9 @@ namespace GeneticAlgorithms {
    * ATTENTION this function maximizes by default, change RankFunctor
    * sign for minimization.
    *
+   * @note This function implements basic elitism algorithm, the best
+   * candidate survives to next generation.
+   *
    * @code
    *   std::mt19937_64 rng(12564);
    *   Chromosome<N> best = solve<N>(1000u, // iterations
@@ -93,7 +96,7 @@ namespace GeneticAlgorithms {
     typename Population<N, RankFunctor, T>::Hypothesis best = current.top();
 
     for (size_t i=0; i<num_iterations; ++i) {
-      for (auto couple : current.select(select_func)) {
+      for (auto couple : current.select(select_func, population_size - 1uL)) {
         next.push(mutate_func(cross_over_func(couple.first, couple.second)));
       }
       std::swap(current, next);
@@ -101,16 +104,13 @@ namespace GeneticAlgorithms {
       if (best.second < current.top().second) {
         best = current.top();
       }
-      if (verbosity > 0) {
-        std::cout << i << ": " << best.second << " :: "
-                  << current.top().second << " "
-                  << current.top().first.gens()
-                  << std::endl;
-      }
+      // elitism: the best one passes directly
+      current.push(best.first);
     }
 
     return best.first;
   }
+
 } // namespace GeneticAlgorithms
 
 #endif // GENETIC_SOLVER_H

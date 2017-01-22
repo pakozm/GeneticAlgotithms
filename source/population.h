@@ -56,6 +56,10 @@ namespace GeneticAlgorithms {
       _top(Chromosome<N>(), std::numeric_limits<T>::min()) {
     }
 
+    size_t size() const {
+      return _queue.size();
+    }
+
     /// push and rank the given Chromosome<N>
     void push(const Chromosome<N> &x) {
       _queue.push_back(Hypothesis(x, _rank_func(x)));
@@ -92,6 +96,7 @@ namespace GeneticAlgorithms {
     template<typename SelectionFunctor>
     std::vector<typename Chromosome<N>::Couple >
     select(const SelectionFunctor &select_func, size_t result_size=0uL) {
+      if (result_size == 0uL) result_size = _queue.size();
       return select_func(_queue, result_size);
     }
 
