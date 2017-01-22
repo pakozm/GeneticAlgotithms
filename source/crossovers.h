@@ -122,6 +122,57 @@ namespace GeneticAlgorithms {
     mutable std::uniform_int_distribution<size_t> _int_dist;
   }; // class RandomMixCrossOver
 
+
+  /**
+   * This class introduces cross-over probability over cross-over functors
+   *
+   * Instead of instantiated directly this class, use the helper function
+   * make_cross_over_on_prob
+   */
+  template <std::size_t N, typename CrossOverFunctor>
+  class CrossOverOnProbWrapper {
+  public:
+    CrossOverOnProbWrapper(unsigned seed,
+                           float prob,
+                           const CrossOverFunctor &crossover) :
+      _rng(seed),
+      _real_dist(0.0f, 1.0f),
+      _binary_dist(0uL, 1uL),
+      _prob(prob),
+      _crossover(crossover) {
+    }
+
+    /// Cross-overs with _prob probability, else returns one random parent
+    Chromosome<N> operator()(const Chromosome<N> &a,
+                             const Chromosome<N> &b) const {
+      if (_real_dist(_rng) < _prob) {
+        return _crossover(a, b);
+      }
+      else {
+        if (_binary_dist(_rng) == 0uL) return a;
+        else return b;
+      }
+    }
+
+  private:
+    mutable std::mt19937_64 _rng;
+    mutable std::uniform_real_distribution<float> _real_dist;
+    mutable std::uniform_int_distribution<size_t> _binary_dist;
+    float _prob;
+    CrossOverFunctor _crossover;
+  };
+
+  /// Helper for construction of CrossOverOnProbWrapper instances
+  template <std::size_t N, typename CrossOverFunctor>
+  CrossOverOnProbWrapper<N, CrossOverFunctor>
+  make_cross_over_on_prob(unsigned seed,
+                          float prob,
+                          const CrossOverFunctor &crossover) {
+    return CrossOverOnProbWrapper<N, CrossOverFunctor>(seed,
+                                                       prob,
+                                                       crossover);
+  }
+
 } // namespace GeneticAlgorithms
 
 #endif // CROSSOVERS_H

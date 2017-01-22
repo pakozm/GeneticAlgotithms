@@ -56,14 +56,16 @@ int main() {
   }
   
   MyRank rank(objects, Q);
-  Chromosome<N> best = solve<N>(1000u,
-                                1000u,
-                                RandomInitializer<N>(rng(), 0.1f),
-                                RouletteWheelSelection<N>(rng()),
-                                RandomMixCrossOver<N>(rng()),
-                                RandomMutate<N>(rng(), 0.001f),
-                                rank,
-                                1);  
+  Chromosome<N> best =
+    solve<N>(1000u,
+             1000u,
+             RandomInitializer<N>(rng(), 0.1f),
+             RouletteWheelSelection<N>(rng()),
+             make_cross_over_on_prob<N>(rng(), 0.5f,
+                                        RandomMixCrossOver<N>(rng())),
+             RandomMutate<N>(rng(), 0.001f),
+             rank,
+             1);
   float w = 0.0f;
   for (size_t i=0; i<best.size(); ++i) {
     if (best[i]) w += objects[i].second;
