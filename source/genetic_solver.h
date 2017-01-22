@@ -63,14 +63,22 @@ namespace GeneticAlgorithms {
    * candidate survives to next generation.
    *
    * @code
-   *   std::mt19937_64 rng(12564);
-   *   Chromosome<N> best = solve<N>(1000u, // iterations
-   *                                 100u,  // population
-   *                                 RandomInitializer<N>(rng()),
-   *                                 RankDistSelection<N>(rng()),
-   *                                 RandomSplitCrossOver<N>(rng()),
-   *                                 RandomMutate<N>(rng(), 0.5f),
-   *                                 MyRank());
+   *  template<std::size_t N>
+   *  struct MyRank {
+   *    float operator()(const Chromosome<N> &x) const {
+   *      Decoder<N> decoder(x);
+   *      float rank = decoder.decodeFloat(N, -5.0f, 5.0f);
+   *      return rank;
+   *    }
+   *  };
+   *  std::mt19937_64 rng(12564);
+   *  Chromosome<N> best = solve<N>(1000u, // iterations
+   *                                100u,  // population
+   *                                RandomInitializer<N>(rng()),
+   *                                RankDistSelection<N>(rng()),
+   *                                RandomSplitCrossOver<N>(rng()),
+   *                                RandomMutate<N>(rng(), 0.5f),
+   *                                MyRank<N>());
    * @endcode
    */
   template<std::size_t N,

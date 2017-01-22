@@ -51,7 +51,7 @@ namespace GeneticAlgorithms {
    * @code
    * // my_chromosome has 12 bits:
    * //    - 5 bits are a uint32_t
-   * //    - 5 bits are a float number
+   * //    - 5 bits are a float number in range [0,1]
    * //    - 2 bits are boolean flags
    * decoder = Decoder(my_chromosme);
    * uint32_t x = decoder.decodeUInt32(5); 
@@ -74,19 +74,19 @@ namespace GeneticAlgorithms {
     uint64_t decodeUInt64(const size_t n) {
       uint64_t x = 0u;
       size_t i = _pos, j = _pos + n - 1;
-        for (size_t k=j+1u; k>i; --k) {
-          x = (x<<1uL) | static_cast<uint64_t>(_gens[k-1]);
-        }
+      for (size_t k=j+1u; k>i; --k) {
+        x = (x<<1uL) | static_cast<uint64_t>(_gens[k-1]);
+      }
       _pos += n;
       return x;
     }
-
+    
     uint32_t decodeUInt32(const size_t n) {
       uint32_t x = 0u;
       size_t i = _pos, j = _pos + n - 1;
-        for (size_t k=j+1u; k>i; --k) {
-          x = (x<<1uL) | static_cast<uint32_t>(_gens[k-1]);
-        }
+      for (size_t k=j+1u; k>i; --k) {
+        x = (x<<1uL) | static_cast<uint32_t>(_gens[k-1]);
+      }
       _pos += n;
       return x;
     }
