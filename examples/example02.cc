@@ -60,8 +60,8 @@ int main() {
                                 1000u,
                                 RandomInitializer<N>(rng(), 0.1f),
                                 RankDistSelection<N>(rng()),
-                                RandomSplitCrossOver<N>(rng()),
-                                RandomMutate<N>(rng(), 0.01f),
+                                RandomMixCrossOver<N>(rng()),
+                                RandomMutate<N>(rng(), 0.001f),
                                 rank,
                                 1);  
   float w = 0.0f;
