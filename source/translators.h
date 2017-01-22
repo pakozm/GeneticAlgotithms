@@ -1,3 +1,30 @@
+/*
+ * This file is part of GeneticAlgorithms toolkit
+ *
+ * Copyright 2017, Francisco Zamora-Martinez
+ *
+ * The MIT License (MIT)
+ *
+ * Permission is hereby granted, free of charge, to any person
+ * obtaining a copy of this software and associated documentation
+ * files (the "Software"), to deal in the Software without
+ * restriction, including without limitation the rights to use, copy,
+ * modify, merge, publish, distribute, sublicense, and/or sell copies
+ * of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+ * BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+ * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 #ifndef TRANSLATORS_H
 #define TRANSLATORS_H
 
@@ -9,16 +36,36 @@
 namespace GeneticAlgorithms {
   
   /**
-   * Summary
+   * This decoder allow to convert Chromosome<N> gens into C++ types
    *
+   * C++ types are represented on a fixed number of bits of the
+   * gens. Each time a type is decoded, a position pointer is move
+   * forward, allowing to decode the next required bits.
+   * 
    * ATTENTION: no thread safe object, it should be created for each
    * thread in your program.
+   *
+   * @code
+   * // my_chromosome has 12 bits:
+   * //    - 5 bits are a uint32_t
+   * //    - 5 bits are a float number
+   * //    - 2 bits are boolean flags
+   * decoder = Decoder(my_chromosme);
+   * uint32_t x = decoder.decodeUInt32(5); 
+   * float y = decoder.decodeFloat(5);
+   * bool z1 = decoder.decodeBool();
+   * bool z2 =  decoder.decodeBool();
+   * @endcode
    */
   template <std::size_t N>
   class Decoder {
   public:
     Decoder(const Chromosome<N> &chromosome) :
       _gens(chromosome.gens()), _pos(0u) {
+    }
+
+    bool decodeBool() {
+      return _gens[_pos++];
     }
 
     uint64_t decodeUInt64(const size_t n) {
@@ -39,6 +86,17 @@ namespace GeneticAlgorithms {
         }
       _pos += n;
       return x;
+    }
+
+    double decodeDouble(const size_t n,
+                        const double min,
+                        const double max) {
+      uint64_t x_uint = decodeUInt64(n);
+      // assert(min < max);
+      double length = max - min;
+      double x_double = static_cast<double>
+        (double(x_uint)/double((1uL<<n) - 1uL)*length + min);
+      return x_double;
     }
 
     float decodeFloat(const size_t n,
