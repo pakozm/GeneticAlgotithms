@@ -57,7 +57,7 @@ namespace GeneticAlgorithms {
 
     Chromosome() {
     }
-    
+
     bool operator[](const size_t i) const {
       return _gens[i];
     }
