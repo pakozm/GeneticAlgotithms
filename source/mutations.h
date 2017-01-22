@@ -30,6 +30,7 @@
 
 #include <bitset>
 #include <random>
+#include <unordered_set>
 
 #include "chromosome.h"
 
@@ -55,19 +56,53 @@ namespace GeneticAlgorithms {
       _prob(prob) {
     }
 
+    /**
+     * Functor which applies random mutations to a given Chromosome
+     *
+     * The functor follows two code paths:
+     *
+     * - When the probability of mutation is very high, we assume it
+     *   is better to ask every bit if it should be or not mutated.
+     *
+     * - Otherwise, we assume it is better to draw the number of
+     *   mutated bits from a binomial distribution, and proceed
+     *   sampling as many bits as necessary from a uniform
+     *   distribution.
+     */
     Chromosome<N> operator()(const Chromosome<N> &source) const {
-      std::bitset<N> dest;
-      for (size_t i=0; i<source.size(); ++i) {
-        // sample from the distribution and decide
-        if (_real_dist(_rng) < _prob) {
-          dest[i] = !source[i];
-        }
-        else {
-          dest[i] = source[i];
+      std::bitset<N> dest(source.gens());
+      
+      if (_prob > 0.2f) {
+        // high mutation probability, traverse all bits
+        for (size_t i=0; i<source.size(); ++i) {
+          if (_real_dist(_rng) < _prob) dest.flip(i);
         }
       }
-      return Chromosome<N>(dest);
+      else { // _prob <= 0.2f
+        // low mutation probability, draw from a binomial
+        
+        // This set avoids possible repeated mutation candidates
+        std::unordered_set<size_t> positions;
+        // Sample the number of bits to mutate from this distribution
+        std::binomial_distribution<size_t> bdist(source.size(), _prob);
+        size_t n_gens_to_mutate = bdist(_rng);
+        if (n_gens_to_mutate > 0uL) {
+          // Sample which bit should be mutated from next distribution
+          std::uniform_int_distribution<size_t> dist(0uL, source.size() - 1);
+          size_t n_mutations = 0uL;
+          while(n_mutations < n_gens_to_mutate) {
+            size_t pos = dist(_rng);
+            if (positions.find(pos) == positions.end()) {
+              dest.flip(pos);
+              positions.insert(pos);
+              ++n_mutations;
+            }
+          }
+        }
+      }
+      return Chromosome<N>(std::move(dest));
     }
+
   private:
     mutable std::mt19937_64 _rng;
     mutable std::uniform_real_distribution<float> _real_dist;

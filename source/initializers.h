@@ -61,7 +61,7 @@ namespace GeneticAlgorithms {
         // sample from the distribution and decide if 0 or 1
         dest[i] = (_real_dist(_rng) < _prob);
       }
-      return Chromosome<N>(dest);
+      return Chromosome<N>(std::move(dest));
     }
 
   private:

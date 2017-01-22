@@ -65,7 +65,7 @@ namespace GeneticAlgorithms {
       for (size_t i=pos; i<a.size(); ++i) {
         dest[i] = b[i];
       }
-      return Chromosome<N>(dest);
+      return Chromosome<N>(std::move(dest));
     }
   private:
     mutable std::mt19937_64 _rng;
@@ -103,7 +103,7 @@ namespace GeneticAlgorithms {
           dest[i] = b[i];
         }
       }
-      return Chromosome<N>(dest);
+      return Chromosome<N>(std::move(dest));
     }
   private:
     mutable std::mt19937_64 _rng;

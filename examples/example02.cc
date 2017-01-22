@@ -30,14 +30,14 @@ struct MyRank {
   float operator()(const Chromosome<N> &x) const {
     float W = 0.0f;
     float B = 0.0f;
-    for (size_t i=0u; i<x.size() && W < _Q; ++i) {
+    for (size_t i=0u; i<x.size(); ++i) {
       if (x[i]) {
-        B += _objects[i].first;
         W += _objects[i].second;
+        if (W > _Q) return 0.0f;
+        B += _objects[i].first;
       }
     }
-    if (W > _Q) return 0.0f;
-    else return B;
+    return B;
   }
   vector<object_t> _objects;
   float _Q;

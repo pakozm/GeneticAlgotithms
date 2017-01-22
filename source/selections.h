@@ -64,7 +64,7 @@ namespace GeneticAlgorithms {
       std::vector<float> ranks(pop.size());
       // extract all ranks from pop vector
       std::transform(pop.begin(), pop.end(), ranks.begin(),
-                     [](std::pair<Chromosome<N>, T> x){ return x.second; });
+                     [](const std::pair<Chromosome<N>, T> &x){ return x.second; });
       // the minimum would be used to check if all ranks are positive
       float min = *std::min_element(ranks.begin(), ranks.end());
       if (min < 0.0f) {
@@ -80,11 +80,10 @@ namespace GeneticAlgorithms {
 
       // generate a vector of couples by sampling from distribution
       std::vector<typename Chromosome<N>::Couple> result(result_size);
-      for (size_t i=0; i<result_size; ++i) {
+      for (auto it = result.begin(); it != result.end(); ++it) {
         size_t x_pos = distribution(_rng);
         size_t y_pos = distribution(_rng);
-        result[i] = std::make_pair(pop[x_pos].first,
-                                   pop[y_pos].first);
+        *it = std::make_pair(pop[x_pos].first, pop[y_pos].first);
       }
 
       return result;
