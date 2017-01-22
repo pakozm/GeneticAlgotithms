@@ -55,7 +55,7 @@ namespace GeneticAlgorithms {
    * //    - 2 bits are boolean flags
    * decoder = Decoder(my_chromosme);
    * uint32_t x = decoder.decodeUInt32(5); 
-   * float y = decoder.decodeFloat(5);
+   * float y = decoder.decodeFloat(5, 0.0f, 1.0f);
    * bool z1 = decoder.decodeBool();
    * bool z2 =  decoder.decodeBool();
    * @endcode
@@ -92,8 +92,8 @@ namespace GeneticAlgorithms {
     }
 
     double decodeDouble(const size_t n,
-                        const double min,
-                        const double max) {
+                        const double min=0.0f,
+                        const double max=1.0f) {
       uint64_t x_uint = decodeUInt64(n);
       // assert(min < max);
       double length = max - min;
@@ -103,8 +103,8 @@ namespace GeneticAlgorithms {
     }
 
     float decodeFloat(const size_t n,
-                      const float min,
-                      const float max) {
+                      const float min=0.0f,
+                      const float max=1.0f) {
       uint64_t x_uint = decodeUInt64(n);
       // assert(min < max);
       float length = max - min;
