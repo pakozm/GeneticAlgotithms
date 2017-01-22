@@ -16,7 +16,8 @@ namespace GeneticAlgorithms {
            typename SelectionFunctor,
            typename CrossOverFunctor,
            typename MutationFunctor,
-           typename RankFunctor>
+           typename RankFunctor,
+           typename T=float>
   Chromosome<N> solve(const size_t num_iterations,
                       const size_t population_size,
                       const InitializerFunctor &init_func,
@@ -25,32 +26,32 @@ namespace GeneticAlgorithms {
                       const MutationFunctor &mutate_func,
                       const RankFunctor &rank_func,
                       int verbosity=0) {
-    Population<N, RankFunctor> current(rank_func);
-    Population<N, RankFunctor> next(rank_func);
-    Population<N, RankFunctor> work(rank_func);
+    Population<N, RankFunctor, T> current(rank_func);
+    Population<N, RankFunctor, T> next(rank_func);
 
     current.init(init_func, population_size);
 
-    Chromosome<N> best = current.top();
+    typename Population<N, RankFunctor, T>::Hypothesis best = current.top();
 
     for (size_t i=0; i<num_iterations; ++i) {
       for (auto couple : current.select(select_func,
                                         population_size)) {
-        next.push(mutate_func(cross_over_func(couple.first,
-                                              couple.second)));
+        next.push(mutate_func(cross_over_func(couple.first, couple.second)));
       }
       std::swap(current, next);
-      if (best < current.top()) {
+      next.reset();
+      if (best.second < current.top().second) {
         best = current.top();
       }
       if (verbosity > 0) {
-        std::cout << i << ": " << best.rank() << " :: "
-                  << current.top().rank() << " " << current.top().gens()
+        std::cout << i << ": " << best.second << " :: "
+                  << current.top().second << " "
+                  << current.top().first.gens()
                   << std::endl;
       }
     }
 
-    return best;
+    return best.first;
   }
 } // namespace GeneticAlgorithms
 

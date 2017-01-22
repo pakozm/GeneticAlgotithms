@@ -11,20 +11,20 @@ namespace GeneticAlgorithms {
   /**
    * A class which represents a complete chromosome for genetic algorithms
    *
-   * A Chromosome is represented by a rank (given by a particular
-   * objective function) and its gens combination (a bits vector).
+   * A Chromosome is represented by its gens combination (a bits
+   * set). Indeed, it is a wrapper over a std::bitset in order to make
+   * it inmutable.
    */
   template<std::size_t N>
   class Chromosome {
   public:
     typedef std::pair<Chromosome<N>, Chromosome<N> > Couple;
     
-    Chromosome(const std::bitset<N> &gens,
-               float rank=-std::numeric_limits<float>::infinity()) :
-      _gens(gens), _rank(rank) {
+    Chromosome(const std::bitset<N> &gens) :
+      _gens(gens) {
     }
 
-    Chromosome() : _rank(0.0f) {
+    Chromosome() {
     }
     
     bool operator[](const size_t i) const {
@@ -34,18 +34,6 @@ namespace GeneticAlgorithms {
     size_t size() const {
       return _gens.size();
     }
-  
-    const float &rank() const {
-      return _rank;
-    }
-
-    bool operator<(const Chromosome &other) const {
-      return _rank < other._rank;
-    }
-
-    bool operator==(const Chromosome &other) const {
-      return _rank == other._rank;
-    }
 
     const std::bitset<N> &gens() const {
       return _gens;
@@ -53,7 +41,6 @@ namespace GeneticAlgorithms {
 
   private:
     std::bitset<N> _gens;
-    float _rank;
   }; // class Chromosome
 
 } // namespace GeneticAlgorithms

@@ -69,6 +69,6 @@ int main() {
     if (best[i]) w += objects[i].second;
   }
 
-  cout << best.rank() << " " << w << " " << best.gens() << endl;
+  cout << rank(best) << " " << w << " " << best.gens() << endl;
   return 0;
 }

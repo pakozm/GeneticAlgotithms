@@ -37,7 +37,7 @@ namespace GeneticAlgorithms {
     }
   private:
     mutable std::mt19937_64 _rng;
-    mutable std::uniform_int_distribution<float> _int_dist;
+    mutable std::uniform_int_distribution<size_t> _int_dist;
   }; // class RandomSplitCrossOver
 
   /**

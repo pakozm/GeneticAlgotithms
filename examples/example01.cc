@@ -26,13 +26,14 @@ struct MyRank {
 
 int main() {
   std::mt19937_64 rng(12564);
+  MyRank rank;
   Chromosome<N> best = solve<N>(1000u,
                                 100u,
                                 RandomInitializer<N>(rng()),
                                 RankDistSelection<N>(rng()),
                                 RandomSplitCrossOver<N>(rng()),
                                 RandomMutate<N>(rng(), 0.5f),
-                                MyRank());
-  cout << best.rank() << " " << best.gens() << endl;
+                                rank);
+  cout << rank(best) << " " << best.gens() << endl;
   return 0;
 }
