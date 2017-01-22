@@ -51,7 +51,8 @@ namespace GeneticAlgorithms {
   public:
     RandomSplitCrossOver(unsigned seed) :
       _rng(seed),
-      _int_dist(0, N-1) {
+      _int_dist(0uL, N-1),
+      _binary_dist(0uL, 1uL) {
     }
 
     Chromosome<N> operator()(const Chromosome<N> &a,
@@ -59,17 +60,28 @@ namespace GeneticAlgorithms {
       std::bitset<N> dest;
       // sample a random integer
       size_t pos = static_cast<size_t>(_int_dist(_rng));
-      for (size_t i=0; i<pos; ++i) {
-        dest[i] = a[i];
+      if (_binary_dist(_rng) == 0uL) {
+        for (size_t i=0; i<pos; ++i) {
+          dest[i] = a[i];
+        }
+        for (size_t i=pos; i<b.size(); ++i) {
+          dest[i] = b[i];
+        }
       }
-      for (size_t i=pos; i<a.size(); ++i) {
-        dest[i] = b[i];
+      else {
+        for (size_t i=0; i<pos; ++i) {
+          dest[i] = b[i];
+        }
+        for (size_t i=pos; i<a.size(); ++i) {
+          dest[i] = a[i];
+        }
       }
       return Chromosome<N>(std::move(dest));
     }
   private:
     mutable std::mt19937_64 _rng;
     mutable std::uniform_int_distribution<size_t> _int_dist;
+    mutable std::uniform_int_distribution<size_t> _binary_dist;
   }; // class RandomSplitCrossOver
 
 
