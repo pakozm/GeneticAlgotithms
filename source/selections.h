@@ -59,7 +59,8 @@ namespace GeneticAlgorithms {
 
     /// This functor receives a population and returns selected couples
     std::vector<typename Chromosome<N>::Couple>
-    operator()(const std::vector<std::pair<Chromosome<N>, T> > pop) const {
+    operator()(const std::vector<std::pair<Chromosome<N>, T> > pop,
+               size_t result_size=0uL) const {
       std::vector<float> ranks(pop.size());
       // extract all ranks from pop vector
       std::transform(pop.begin(), pop.end(), ranks.begin(),
@@ -75,9 +76,11 @@ namespace GeneticAlgorithms {
       // the multinomial distribution is computed here
       std::discrete_distribution<int> distribution(ranks.begin(), ranks.end());
 
+      if (result_size == 0uL) result_size = pop.size();
+
       // generate a vector of couples by sampling from distribution
-      std::vector<typename Chromosome<N>::Couple> result(pop.size());
-      for (size_t i=0; i<result.size(); ++i) {
+      std::vector<typename Chromosome<N>::Couple> result(result_size);
+      for (size_t i=0; i<result_size; ++i) {
         size_t x_pos = distribution(_rng);
         size_t y_pos = distribution(_rng);
         result[i] = std::make_pair(pop[x_pos].first,

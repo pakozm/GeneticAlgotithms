@@ -87,12 +87,12 @@ namespace GeneticAlgorithms {
      * Given a selection functor, returns the selection of couples
      *
      * @note It is expected that SelectionFunctor produces a result
-     * with the same size of the input population.
+     * with the given size.
      */
     template<typename SelectionFunctor>
     std::vector<typename Chromosome<N>::Couple >
-    select(const SelectionFunctor &select_func) {
-      return select_func(_queue);
+    select(const SelectionFunctor &select_func, size_t result_size=0uL) {
+      return select_func(_queue, result_size);
     }
 
     /// Clears the vector
