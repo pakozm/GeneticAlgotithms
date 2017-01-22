@@ -2,6 +2,7 @@ gmon.out
 .dir-locals.el
 april_tools
 .april-ann*pc
+doc
 
 # ignores any shell script
 ##########################
