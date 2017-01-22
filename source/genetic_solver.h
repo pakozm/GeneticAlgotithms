@@ -40,20 +40,20 @@ namespace GeneticAlgorithms {
    *
    * This algorithm is build on top of several genetic operators:
    *
-   * - InitializerFunctor: a functor which returns a Chromosome<N> each
+   * - InitializerFunctor: a functor which returns a Chromosome each
    *      time it is called.
    *
    * - SelectionFunctor: a functor which receives a vector of
    *      hypothesis and produces as output a vector of
-   *      Chromosome<N>::Couple selected for cross over.
+   *      Chromosome::Couple selected for cross over.
    *
-   * - CrossOverFunctor: a functor which receives two Chromosome<N> and
+   * - CrossOverFunctor: a functor which receives two Chromosome and
    *      returns their child, mixing gens on both inputs.
    *
-   * - MutationFunctor: a functor which receives a Chromosome<N> and
+   * - MutationFunctor: a functor which receives a Chromosome and
    *      returns another one with some gens mutated (or not).
    *
-   * - RankFunctor: a functor which receives a Chromosome<N> and returns
+   * - RankFunctor: a functor which receives a Chromosome and returns
    *      its rank (template typename T)
    *
    * ATTENTION this function maximizes by default, change RankFunctor
@@ -63,45 +63,43 @@ namespace GeneticAlgorithms {
    * candidate survives to next generation.
    *
    * @code
-   *  template<std::size_t N>
    *  struct MyRank {
-   *    float operator()(const Chromosome<N> &x) const {
-   *      Decoder<N> decoder(x);
+   *    float operator()(const Chromosome &x) const {
+   *      Decoder decoder(x);
    *      float rank = decoder.decodeFloat(N, -5.0f, 5.0f);
    *      return rank;
    *    }
    *  };
    *  std::mt19937_64 rng(12564);
-   *  Chromosome<N> best = solve<N>(1000u, // iterations
-   *                                100u,  // population
-   *                                RandomInitializer<N>(rng()),
-   *                                RankDistSelection<N>(rng()),
-   *                                RandomSplitCrossOver<N>(rng()),
-   *                                RandomMutate<N>(rng(), 0.5f),
-   *                                MyRank<N>());
+   *  Chromosome best = solve(1000u, // iterations
+   *                          100u,  // population
+   *                          RandomInitializer(N, rng(), 0.5f),
+   *                          FloatRouletteWheelSelection(rng()),
+   *                          RandomSplitCrossOver(N, rng()),
+   *                          RandomMutate(rng(), 0.5f),
+   *                          MyRank());
    * @endcode
    */
-  template<std::size_t N,
-           typename InitializerFunctor,
+  template<typename InitializerFunctor,
            typename SelectionFunctor,
            typename CrossOverFunctor,
            typename MutationFunctor,
            typename RankFunctor,
            typename T=float>
-  Chromosome<N> solve(const size_t num_iterations,
-                      const size_t population_size,
-                      const InitializerFunctor &init_func,
-                      const SelectionFunctor &select_func,
-                      const CrossOverFunctor &cross_over_func,
-                      const MutationFunctor &mutate_func,
-                      const RankFunctor &rank_func,
-                      int verbosity=0) {
-    Population<N, RankFunctor, T> current(rank_func);
-    Population<N, RankFunctor, T> next(rank_func);
+  Chromosome solve(const size_t num_iterations,
+                   const size_t population_size,
+                   const InitializerFunctor &init_func,
+                   const SelectionFunctor &select_func,
+                   const CrossOverFunctor &cross_over_func,
+                   const MutationFunctor &mutate_func,
+                   const RankFunctor &rank_func,
+                   int verbosity=0) {
+    Population<RankFunctor, T> current(rank_func);
+    Population<RankFunctor, T> next(rank_func);
 
     current.init(init_func, population_size);
 
-    typename Population<N, RankFunctor, T>::Hypothesis best = current.top();
+    typename Population<RankFunctor, T>::Hypothesis best = current.top();
 
     for (size_t i=0; i<num_iterations; ++i) {
       for (auto couple : current.select(select_func, population_size - 1uL)) {

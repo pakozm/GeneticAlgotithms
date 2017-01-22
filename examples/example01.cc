@@ -17,8 +17,8 @@ using namespace GeneticAlgorithms;
 #define N 50
 
 struct MyRank {
-  float operator()(const Chromosome<N> &x) const {
-    Decoder<N> decoder(x);
+  float operator()(const Chromosome &x) const {
+    Decoder decoder(x);
     float rank = decoder.decodeFloat(N, -5.0f, 5.0f);
     return rank;
   }
@@ -27,14 +27,14 @@ struct MyRank {
 int main() {
   std::mt19937_64 rng(12564);
   MyRank rank;
-  Chromosome<N> best = solve<N>(10000u,
-                                100u,
-                                RandomInitializer<N>(rng()),
-                                RouletteWheelSelection<N>(rng()),
-                                RandomSplitCrossOver<N>(rng()),
-                                RandomMutate<N>(rng(), 0.5f),
-                                rank,
-				1);
+  Chromosome best = solve(10000u,
+                          100u,
+                          RandomInitializer(N, rng()),
+                          RouletteWheelSelection<float>(rng()),
+                          RandomSplitCrossOver(N, rng()),
+                          RandomMutate(rng(), 0.5f),
+                          rank,
+                          1);
   cout << rank(best) << " " << best.gens() << endl;
   return 0;
 }

@@ -48,7 +48,7 @@ namespace GeneticAlgorithms {
    * on different threads, be sure each thread receives a different
    * instance.
    */
-  template<std::size_t N, typename T=float>
+  template<typename T>
   class RouletteWheelSelection {
   public:
 
@@ -58,13 +58,13 @@ namespace GeneticAlgorithms {
     }
 
     /// This functor receives a population and returns selected couples
-    std::vector<typename Chromosome<N>::Couple>
-    operator()(const std::vector<std::pair<Chromosome<N>, T> > pop,
+    std::vector<typename Chromosome::Couple>
+    operator()(const std::vector<std::pair<Chromosome, T> > pop,
                size_t result_size) const {
       std::vector<float> ranks(pop.size());
       // extract all ranks from pop vector
       std::transform(pop.begin(), pop.end(), ranks.begin(),
-                     [](const std::pair<Chromosome<N>, T> &x){ return x.second; });
+                     [](const std::pair<Chromosome, T> &x){ return x.second; });
       // the minimum would be used to check if all ranks are positive
       float min = *std::min_element(ranks.begin(), ranks.end());
       if (min < 0.0f) {
@@ -77,7 +77,7 @@ namespace GeneticAlgorithms {
       std::discrete_distribution<int> distribution(ranks.begin(), ranks.end());
 
       // generate a vector of couples by sampling from distribution
-      std::vector<typename Chromosome<N>::Couple> result(result_size);
+      std::vector<typename Chromosome::Couple> result(result_size);
       for (auto it = result.begin(); it != result.end(); ++it) {
         size_t x_pos = distribution(_rng);
         size_t y_pos = distribution(_rng);
@@ -90,6 +90,9 @@ namespace GeneticAlgorithms {
     mutable std::mt19937_64 _rng;
   };
 
+  typedef RouletteWheelSelection<float> FloatRouletteWheelSelection;
+  typedef RouletteWheelSelection<double> DoubleRouletteWheelSelection;
+  
 } // namespace GeneticAlgorithms
 
 #endif // SELECTIONS_H

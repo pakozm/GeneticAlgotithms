@@ -28,7 +28,7 @@
 #ifndef TRANSLATORS_H
 #define TRANSLATORS_H
 
-#include <bitset>
+#include <boost/dynamic_bitset.hpp>
 #include <iostream>
 
 #include "chromosome.h"
@@ -36,7 +36,7 @@
 namespace GeneticAlgorithms {
   
   /**
-   * This decoder allow to convert Chromosome<N> gens into C++ types
+   * This decoder allow to convert Chromosome gens into C++ types
    *
    * C++ types are represented on a fixed number of bits of the
    * gens. Each time a type is decoded, a position pointer is move
@@ -60,10 +60,9 @@ namespace GeneticAlgorithms {
    * bool z2 =  decoder.decodeBool();
    * @endcode
    */
-  template <std::size_t N>
   class Decoder {
   public:
-    Decoder(const Chromosome<N> &chromosome) :
+    Decoder(const Chromosome &chromosome) :
       _gens(chromosome.gens()), _pos(0u) {
     }
 
@@ -114,10 +113,10 @@ namespace GeneticAlgorithms {
     }
 
   private:
-    std::bitset<N> _gens;
+    bitset _gens;
     uint32_t _pos;
   }; // class Decoder
-  
+
   // template <typename N>
   // class EncoderBuilder {
   // public:
@@ -172,7 +171,6 @@ namespace GeneticAlgorithms {
   //     float length = max - min;
   //     return static_cast<float>(static_cast<double>(x_uint)*length + min);
   //   }
-
 
 } // namespace GeneticAlgorithms
 

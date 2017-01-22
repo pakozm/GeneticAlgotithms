@@ -28,7 +28,7 @@
 #ifndef INITIALIZERS_H
 #define INITIALIZERS_H
 
-#include <bitset>
+#include <boost/dynamic_bitset.hpp>
 #include <limits>
 #include <random>
 
@@ -37,7 +37,7 @@
 namespace GeneticAlgorithms {
 
   /**
-   * This class generates Chromosomes<N> with random gens
+   * This class generates Chromosomes with random gens
    *
    * The functor uses the given probability to decide if a gen should
    * be 0 or 1, following a Bernoulli distribution with parameter
@@ -46,25 +46,26 @@ namespace GeneticAlgorithms {
    * ATTENTION: no thread safe object, it should be created for each
    * thread in your program.
    */
-  template <std::size_t N>
   class RandomInitializer {
   public:
-    RandomInitializer(unsigned seed, float prob=0.5f) :
+    RandomInitializer(size_t N, unsigned seed, float prob) :
+      _N(N),
       _rng(seed),
       _real_dist(0.0f, 1.0f),
       _prob(prob) {
     }
 
-    Chromosome<N> operator()() const {
-      std::bitset<N> dest;
-      for (size_t i=0; i<N; ++i) {
+    Chromosome operator()() const {
+      bitset dest(_N);
+      for (size_t i=0; i<_N; ++i) {
         // sample from the distribution and decide if 0 or 1
         dest[i] = (_real_dist(_rng) < _prob);
       }
-      return Chromosome<N>(std::move(dest));
+      return Chromosome(std::move(dest));
     }
 
   private:
+    const unsigned _N;
     mutable std::mt19937_64 _rng;
     mutable std::uniform_real_distribution<float> _real_dist;
     const float _prob;

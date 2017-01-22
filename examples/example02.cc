@@ -27,7 +27,7 @@ struct MyRank {
     _objects(objects),
     _Q(q) {
   }
-  float operator()(const Chromosome<N> &x) const {
+  float operator()(const Chromosome &x) const {
     float W = 0.0f;
     float B = 0.0f;
     for (size_t i=0u; i<x.size(); ++i) {
@@ -56,16 +56,16 @@ int main() {
   }
   
   MyRank rank(objects, Q);
-  Chromosome<N> best =
-    solve<N>(1000u,
-             1000u,
-             RandomInitializer<N>(rng(), 0.1f),
-             RouletteWheelSelection<N>(rng()),
-             make_cross_over_on_prob<N>(rng(), 0.5f,
-                                        RandomMixCrossOver<N>(rng())),
-             RandomMutate<N>(rng(), 0.001f),
-             rank,
-             1);
+  Chromosome best =
+    solve(1000u,
+          1000u,
+          RandomInitializer(N, rng(), 0.1f),
+          FloatRouletteWheelSelection(rng()),
+          make_cross_over_on_prob(rng(), 0.5f,
+                                  RandomMixCrossOver(rng())),
+          RandomMutate(rng(), 0.001f),
+          rank,
+          1);
   float w = 0.0f;
   for (size_t i=0; i<best.size(); ++i) {
     if (best[i]) w += objects[i].second;

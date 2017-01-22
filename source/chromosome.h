@@ -28,30 +28,31 @@
 #ifndef CHROMOSOME_H
 #define CHROMOSOME_H
 
-#include <bitset>
+#include <boost/dynamic_bitset.hpp>
 #include <cstdint>
 #include <cmath>
 #include <numeric>
 
 namespace GeneticAlgorithms {
+
+  typedef boost::dynamic_bitset< > bitset;
   
   /**
    * A class which represents a complete chromosome for genetic algorithms
    *
    * A Chromosome is represented by its gens combination (a bits
-   * set). Indeed, it is a wrapper over a std::bitset in order to make
-   * it inmutable.
+   * set). Indeed, it is a wrapper over a boost::dynamic_bitset in
+   * order to make it inmutable.
    *
    * A set of utilities is available at `translators.h` which allow
-   * the programmer to decode Chromosomes<N> into a different C++
+   * the programmer to decode Chromosomes into a different C++
    * types.
    */
-  template<std::size_t N>
   class Chromosome {
   public:
-    typedef std::pair<Chromosome<N>, Chromosome<N> > Couple;
+    typedef std::pair<Chromosome, Chromosome > Couple;
 
-    Chromosome(const std::bitset<N> &gens) :
+    Chromosome(const bitset &gens) :
       _gens(gens) {
     }
 
@@ -66,12 +67,12 @@ namespace GeneticAlgorithms {
       return _gens.size();
     }
 
-    const std::bitset<N> &gens() const {
+    const bitset &gens() const {
       return _gens;
     }
 
   private:
-    std::bitset<N> _gens;
+    bitset _gens;
   }; // class Chromosome
 
 } // namespace GeneticAlgorithms

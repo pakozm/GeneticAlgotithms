@@ -29,7 +29,7 @@
 #define CROSSOVERS_H
 
 #include <algorithm>
-#include <bitset>
+#include <boost/dynamic_bitset.hpp>
 #include <random>
 
 #include "chromosome.h"
@@ -46,18 +46,16 @@ namespace GeneticAlgorithms {
    * ATTENTION: no thread safe object, it should be created for each
    * thread in your program.
    */
-  template <std::size_t N>
   class RandomSplitCrossOver {
   public:
-    RandomSplitCrossOver(unsigned seed) :
+    RandomSplitCrossOver(size_t N, unsigned seed) :
       _rng(seed),
       _int_dist(0uL, N-1),
       _binary_dist(0uL, 1uL) {
     }
 
-    Chromosome<N> operator()(const Chromosome<N> &a,
-                             const Chromosome<N> &b) const {
-      std::bitset<N> dest;
+    Chromosome operator()(const Chromosome &a, const Chromosome &b) const {
+      bitset dest(a.size());
       // sample a random integer
       size_t pos = static_cast<size_t>(_int_dist(_rng));
       if (_binary_dist(_rng) == 0uL) {
@@ -76,7 +74,7 @@ namespace GeneticAlgorithms {
           dest[i] = a[i];
         }
       }
-      return Chromosome<N>(std::move(dest));
+      return Chromosome(std::move(dest));
     }
   private:
     mutable std::mt19937_64 _rng;
@@ -95,7 +93,6 @@ namespace GeneticAlgorithms {
    * ATTENTION: no thread safe object, it should be created for each
    * thread in your program.
    */
-  template <std::size_t N>
   class RandomMixCrossOver {
   public:
     RandomMixCrossOver(unsigned seed) :
@@ -103,9 +100,8 @@ namespace GeneticAlgorithms {
       _int_dist(0u, 1u) {
     }
 
-    Chromosome<N> operator()(const Chromosome<N> &a,
-                             const Chromosome<N> &b) const {
-      std::bitset<N> dest;
+    Chromosome operator()(const Chromosome &a, const Chromosome &b) const {
+      bitset dest(a.size());
       for (size_t i=0; i<a.size(); ++i) {
         // flip a coin to decide which parent gene copy is at i position
         if (_int_dist(_rng) == 0u) {
@@ -115,7 +111,7 @@ namespace GeneticAlgorithms {
           dest[i] = b[i];
         }
       }
-      return Chromosome<N>(std::move(dest));
+      return Chromosome(std::move(dest));
     }
   private:
     mutable std::mt19937_64 _rng;
@@ -129,11 +125,10 @@ namespace GeneticAlgorithms {
    * Instead of instantiated directly this class, use the helper function
    * make_cross_over_on_prob
    */
-  template <std::size_t N, typename CrossOverFunctor>
+  template <typename CrossOverFunctor>
   class CrossOverOnProbWrapper {
   public:
-    CrossOverOnProbWrapper(unsigned seed,
-                           float prob,
+    CrossOverOnProbWrapper(unsigned seed, float prob,
                            const CrossOverFunctor &crossover) :
       _rng(seed),
       _real_dist(0.0f, 1.0f),
@@ -143,8 +138,7 @@ namespace GeneticAlgorithms {
     }
 
     /// Cross-overs with _prob probability, else returns one random parent
-    Chromosome<N> operator()(const Chromosome<N> &a,
-                             const Chromosome<N> &b) const {
+    Chromosome operator()(const Chromosome &a, const Chromosome &b) const {
       if (_real_dist(_rng) < _prob) {
         return _crossover(a, b);
       }
@@ -163,14 +157,14 @@ namespace GeneticAlgorithms {
   };
 
   /// Helper for construction of CrossOverOnProbWrapper instances
-  template <std::size_t N, typename CrossOverFunctor>
-  CrossOverOnProbWrapper<N, CrossOverFunctor>
+  template <typename CrossOverFunctor>
+  CrossOverOnProbWrapper<CrossOverFunctor>
   make_cross_over_on_prob(unsigned seed,
                           float prob,
                           const CrossOverFunctor &crossover) {
-    return CrossOverOnProbWrapper<N, CrossOverFunctor>(seed,
-                                                       prob,
-                                                       crossover);
+    return CrossOverOnProbWrapper<CrossOverFunctor>(seed,
+                                                    prob,
+                                                    crossover);
   }
 
 } // namespace GeneticAlgorithms

@@ -28,7 +28,7 @@
 #ifndef TRANSFORMS_H
 #define TRANSFORMS_H
 
-#include <bitset>
+#include <boost/dynamic_bitset.hpp>
 #include <random>
 #include <unordered_set>
 
@@ -47,7 +47,6 @@ namespace GeneticAlgorithms {
    * ATTENTION: no thread safe object, it should be created for each
    * thread in your program.
    */
-  template<std::size_t N>
   class RandomMutate {
   public:
     RandomMutate(unsigned seed, float prob) :
@@ -69,8 +68,8 @@ namespace GeneticAlgorithms {
      *   sampling as many bits as necessary from a uniform
      *   distribution.
      */
-    Chromosome<N> operator()(const Chromosome<N> &source) const {
-      std::bitset<N> dest(source.gens());
+    Chromosome operator()(const Chromosome &source) const {
+      bitset dest(source.gens());
       
       if (_prob > 0.2f) {
         // high mutation probability, traverse all bits
@@ -100,7 +99,7 @@ namespace GeneticAlgorithms {
           }
         }
       }
-      return Chromosome<N>(std::move(dest));
+      return Chromosome(std::move(dest));
     }
 
   private:

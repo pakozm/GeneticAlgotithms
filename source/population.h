@@ -38,30 +38,29 @@
 namespace GeneticAlgorithms {
 
   /**
-   * A class representing a population of Chromosome<N>
+   * A class representing a population of Chromosome
    *
-   * This class is responsible of the association of Chromosome<N>
+   * This class is responsible of the association of Chromosome
    * with their rank and of the selection of couples. Both operations
    * are delegated on two functors.
    */
-  template<std::size_t N, typename RankFunctor,
-           typename T = float>
+  template<typename RankFunctor, typename T = float>
   class Population {
   public:
     /// a Hypothesis is the combination of gens and their rank
-    typedef std::pair<Chromosome<N>, T> Hypothesis;
+    typedef std::pair<Chromosome, T> Hypothesis;
     
     Population(const RankFunctor &rank_func) :
       _rank_func(rank_func),
-      _top(Chromosome<N>(), std::numeric_limits<T>::min()) {
+      _top(Chromosome(), std::numeric_limits<T>::min()) {
     }
 
     size_t size() const {
       return _queue.size();
     }
 
-    /// push and rank the given Chromosome<N>
-    void push(const Chromosome<N> &x) {
+    /// push and rank the given Chromosome
+    void push(const Chromosome &x) {
       _queue.push_back(Hypothesis(x, _rank_func(x)));
       if (_top.second < _queue.back().second) _top = _queue.back();
     }
@@ -74,7 +73,7 @@ namespace GeneticAlgorithms {
     /**
      * Initializes by using the given functor
      *
-     * All new Chromosome<N> are push_back into the population without
+     * All new Chromosome are push_back into the population without
      * clearing the vector.
      */
     template<typename InitializerFunctor>
@@ -94,7 +93,7 @@ namespace GeneticAlgorithms {
      * with the given size.
      */
     template<typename SelectionFunctor>
-    std::vector<typename Chromosome<N>::Couple >
+    std::vector<typename Chromosome::Couple >
     select(const SelectionFunctor &select_func, size_t result_size=0uL) {
       if (result_size == 0uL) result_size = _queue.size();
       return select_func(_queue, result_size);
@@ -103,7 +102,7 @@ namespace GeneticAlgorithms {
     /// Clears the vector
     void reset() {
       _queue.clear();
-      _top = Hypothesis(Chromosome<N>(), std::numeric_limits<T>::min());
+      _top = Hypothesis(Chromosome(), std::numeric_limits<T>::min());
     }
 
   private:
