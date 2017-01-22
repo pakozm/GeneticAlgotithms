@@ -45,6 +45,9 @@ namespace GeneticAlgorithms {
    * ATTENTION: no thread safe object, it should be created for each
    * thread in your program.
    *
+   * @note This class doesn't check if the position counter is valid,
+   * be careful, invalid positions can lead into memory problems.
+   *
    * @code
    * // my_chromosome has 12 bits:
    * //    - 5 bits are a uint32_t
